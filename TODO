@@ -1,0 +1,27 @@
+Open items that need work on OpenNHRP:
+
+- interface-up, nhs-up, nhs-down need to be serialized for quagga
+  management. alternatively, the script could return some special
+  value meaning "try again soon".
+
+- offload multicast packet forwarding to kernel
+
+- use mmapped pf_packet interface
+
+- nhrp_peer should be split to more files, it's relatively large now.
+  might split nhrp_peer to separate types.
+
+- Proper handling of unique bit. Currently registration of unique address
+  overwrites previous registration, but this against RFC.
+
+- Load balancing: return multiple CIE entries, when we have multiple
+  local IP addresses. When receiving multi CIE next-hop, balance traffic
+  or for shortcut routes, create a multi nexthop route.
+
+- Create some logic to detect if NBMA and public IPs are mixed up in
+  the "map" directive. Issue on warning about this.
+
+- Support reloading of configuration (via SIGHUP or "opennhrpctl reload")
+
+- Clean shutdown: send purge request to registration servers, dynamic
+  clients and possibly track resolution requests and purge those too.
