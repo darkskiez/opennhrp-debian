@@ -1,0 +1,5 @@
+opennhrp (0.13-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Mark Bryars <debian@darkskiez.co.uk>  Fri, 04 May 2012 22:20:50 +0100

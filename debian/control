@@ -1,0 +1,15 @@
+Source: opennhrp
+Section: unknown
+Priority: extra
+Maintainer: Mark Bryars <debian@darkskiez.co.uk>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://git.debian.org/collab-maint/opennhrp.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/opennhrp.git;a=summary
+
+Package: opennhrp
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
