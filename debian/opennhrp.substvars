@@ -1,2 +1,0 @@
-shlibs:Depends=libc-ares2 (>= 1.7.0), libc6 (>= 2.9)
-misc:Depends=

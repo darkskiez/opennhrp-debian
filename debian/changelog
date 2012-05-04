@@ -1,3 +1,9 @@
+opennhrp (0.13-2) unstable; urgency=low
+  
+  * Kludge workaround for socket location problem
+
+ -- Mark Bryars <debian@darkskiez.co.uk>  Fri, 19 Jun 2012 09:54:50 +0100
+
 opennhrp (0.13-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>

@@ -30,7 +30,7 @@ SCRIPTFILE=/etc/opennhrp/opennhrp-script
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
 
-DAEMON_ARGS=" -d -a $CTRLPIPE -c $CONFFILE -s $SCRIPTFILE -p $PIDFILE $DAEMON_OPTS"
+DAEMON_ARGS=" -d -c $CONFFILE -s $SCRIPTFILE -p $PIDFILE $DAEMON_OPTS"
 # -a /var/run/opennhrp/ctrl -c /etc/opennhrp/opennhrp.conf  -s /etc/opennhrp/opennhrp-script -d  -p /var/run/opennhrp/pid
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
