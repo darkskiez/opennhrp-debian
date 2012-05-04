@@ -27,13 +27,13 @@ CTRLPIPE=$CTRLPATH/ctrl
 CONFFILE=/etc/opennhrp/opennhrp.conf
 SCRIPTFILE=/etc/opennhrp/opennhrp-script
 
-DAEMON_ARGS=" -d -a $CTRLPIPE -c $CONFFILE -s $SCRIPTFILE -p $PIDFILE"
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+DAEMON_ARGS=" -d -a $CTRLPIPE -c $CONFFILE -s $SCRIPTFILE -p $PIDFILE $DAEMON_OPTS"
 # -a /var/run/opennhrp/ctrl -c /etc/opennhrp/opennhrp.conf  -s /etc/opennhrp/opennhrp-script -d  -p /var/run/opennhrp/pid
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
-
-# Read configuration variable file if it is present
-[ -r /etc/default/$NAME ] && . /etc/default/$NAME
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
