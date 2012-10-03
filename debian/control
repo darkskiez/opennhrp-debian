@@ -3,7 +3,7 @@ Section: unknown
 Priority: extra
 Maintainer: Mark Bryars <debian@darkskiez.co.uk>
 Build-Depends: debhelper (>= 8.0.0)
-Standards-Version: 3.9.3
+Standards-Version: 3.9.1
 Homepage: http://sourceforge.net/projects/opennhrp/
 #Vcs-Git: git://git.debian.org/collab-maint/opennhrp.git
 #Vcs-Browser: http://git.debian.org/?p=collab-maint/opennhrp.git;a=summary
