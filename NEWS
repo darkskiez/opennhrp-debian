@@ -6,6 +6,14 @@ Detailed changelog is available via Git history via web:
 http://opennhrp.git.sf.net/git/gitweb.cgi?p=opennhrp;a=blob;f=NEWS;hb=HEAD
 
 -----------------------------------------------------------------------------
+ opennhrp 0.13.1 - released 22/Jun/2012
+-----------------------------------------------------------------------------
+ - fix: make "local-nbma" selector work properly if there are multiple gre
+   interfaces (reported by Alex Levit)
+ - fix: do not call opennhrp-script "interface-up" hook if the interface
+   being created and in down state (reported by Alex Levit)
+
+-----------------------------------------------------------------------------
  opennhrp 0.13 - released 25/Dec/2011
 -----------------------------------------------------------------------------
  - feature: add admin "interfaces show" command to display information about

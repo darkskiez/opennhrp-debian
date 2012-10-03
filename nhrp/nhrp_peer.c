@@ -1833,6 +1833,12 @@ int nhrp_peer_match(struct nhrp_peer *p, struct nhrp_peer_selector *sel)
 	    p->parent != sel->parent)
 		return FALSE;
 
+	if (sel->local_nbma_address.type != PF_UNSPEC) {
+		if (nhrp_address_cmp(&p->my_nbma_address,
+				     &sel->local_nbma_address) != 0)
+			return FALSE;
+	}
+
 	if (sel->protocol_address.type != PF_UNSPEC) {
 		if (sel->prefix_length == 0)
 			sel->prefix_length = sel->protocol_address.addr_len * 8;

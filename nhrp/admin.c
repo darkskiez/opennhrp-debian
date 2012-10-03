@@ -54,10 +54,16 @@ static int parse_word(const char **bufptr, size_t len, char *word)
 	return TRUE;
 }
 
+static void admin_raw_write(void *ctx, const void *buf, size_t len)
+{
+	struct admin_remote *rmt = (struct admin_remote *) ctx;
+
+	if (write(rmt->io.fd, buf, len) != len) {
+	}
+}
 
 static void admin_write(void *ctx, const char *format, ...)
 {
-	struct admin_remote *rmt = (struct admin_remote *) ctx;
 	char msg[1024];
 	va_list ap;
 	size_t len;
@@ -66,8 +72,7 @@ static void admin_write(void *ctx, const char *format, ...)
 	len = vsnprintf(msg, sizeof(msg), format, ap);
 	va_end(ap);
 
-	if (write(rmt->io.fd, msg, len) != len) {
-	}
+	admin_raw_write(ctx, msg, len);
 }
 
 static void admin_free_remote(struct admin_remote *rm)
@@ -148,8 +153,8 @@ static int admin_show_peer(void *ctx, struct nhrp_peer *peer)
 				      rel / 60, rel % 60);
 		}
 	}
-
-	admin_write(ctx, "%s\n", buf);
+	i += snprintf(&buf[i], len - i, "\n");
+	admin_raw_write(ctx, buf, i);
 	return 0;
 }
 
@@ -223,9 +228,9 @@ static int admin_parse_selector(void *ctx, const char *cmd,
 		} else if (strcmp(keyword, "local-nbma") == 0) {
 			if (sel->interface != NULL)
 				goto err_conflict;
-			sel->interface = nhrp_interface_get_by_nbma(&address);
+			sel->local_nbma_address = address;
 			if (sel->interface == NULL)
-				goto err_noiface;
+				sel->interface = nhrp_interface_get_by_nbma(&address);
 		} else {
 			admin_write(ctx,
 				    "Status: failed\n"
@@ -406,7 +411,8 @@ static int admin_show_interface(void *ctx, struct nhrp_interface *iface)
 			nhrp_address_format(&iface->nat_cie.nbma_address, sizeof(tmp), tmp));
 	}
 done:
-	admin_write(ctx, "%s\n", buf);
+	i += snprintf(&buf[i], len - i, "\n");
+	admin_raw_write(ctx, buf, i);
 	return 0;
 }
 
@@ -420,7 +426,7 @@ static void admin_redirect_purge(void *ctx, const char *cmd)
 {
 	char keyword[64];
 	struct nhrp_address addr;
-	uint8_t prefix;
+	uint8_t prefix = 0;
 	int count;
 
 	nhrp_address_set_type(&addr, PF_UNSPEC);
