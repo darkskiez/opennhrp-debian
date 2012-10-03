@@ -461,8 +461,9 @@ static void netlink_link_new(struct nlmsghdr *msg)
 	if (rta[IFLA_MTU])
 		iface->mtu = *((unsigned*)RTA_DATA(rta[IFLA_MTU]));
 
-	if (iface->index == 0 || (ifi->ifi_flags & ifi->ifi_change & IFF_UP)) {
-		nhrp_info("Interface %s: new or configured up, mtu=%d",
+	if (((ifi->ifi_change & IFF_UP) || (iface->index == 0)) &&
+	    (ifi->ifi_flags & IFF_UP)) {
+		nhrp_info("Interface %s: configured UP, mtu=%d",
 			  ifname, iface->mtu);
 		nhrp_interface_run_script(iface, "interface-up");
 	} else {

@@ -123,20 +123,23 @@ struct nhrp_interface *nhrp_interface_get_by_index(unsigned int index, int creat
 
 struct nhrp_interface *nhrp_interface_get_by_nbma(struct nhrp_address *addr)
 {
+	struct nhrp_interface *match = NULL;
 	struct nhrp_interface *iface;
 
 	list_for_each_entry(iface, &name_list, name_list_entry) {
 		if (!(iface->flags & NHRP_INTERFACE_FLAG_CONFIGURED))
 			continue;
 
-		if (nhrp_address_cmp(addr, &iface->nbma_address) == 0)
-			return iface;
-
-		if (iface->nbma_address.type == PF_UNSPEC && !iface->link_index)
-			return iface;
+		if ((nhrp_address_cmp(addr, &iface->nbma_address) == 0) ||
+		    (iface->nbma_address.type == PF_UNSPEC && !iface->link_index)) {
+			/* ambiguous match - return null */
+			if (match != NULL)
+				return NULL;
+			match = iface;
+		}
 	}
 
-	return NULL;
+	return match;
 }
 
 struct nhrp_interface *nhrp_interface_get_by_protocol(struct nhrp_address *addr)

@@ -136,6 +136,8 @@ struct nhrp_peer_selector {
 	int prefix_length;
 	struct nhrp_address protocol_address;
 	struct nhrp_address next_hop_address;
+
+	struct nhrp_address local_nbma_address;
 };
 
 const char * const nhrp_peer_type[NHRP_PEER_TYPE_MAX];
