@@ -2,7 +2,7 @@ Source: opennhrp
 Section: unknown
 Priority: extra
 Maintainer: Mark Bryars <debian@darkskiez.co.uk>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper (>= 8.0.0), libc-ares-dev, pkg-config
 Standards-Version: 3.9.1
 Homepage: http://sourceforge.net/projects/opennhrp/
 #Vcs-Git: git://git.debian.org/collab-maint/opennhrp.git
