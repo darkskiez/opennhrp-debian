@@ -1,13 +1,9 @@
 /* sysdep_pfpacket.c - Tracing of forwarded packets using PF_PACKET
  *
- * Copyright (C) 2007-2009 Timo Teräs <timo.teras@iki.fi>
- * All rights reserved.
+ * Copyright (c) 2007-2012 Timo Teräs <timo.teras@iki.fi>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 or later as
- * published by the Free Software Foundation.
- *
- * See http://www.gnu.org/ for details.
+ * This software is licensed under the MIT License.
+ * See MIT-LICENSE.txt for additional details.
  */
 
 #include <errno.h>
@@ -29,8 +25,6 @@
 #include "nhrp_common.h"
 #include "nhrp_interface.h"
 #include "nhrp_peer.h"
-
-#define MAX_OPCODES 100
 
 struct multicast_packet {
 	struct nhrp_interface *iface;
@@ -61,13 +55,35 @@ enum {
 
 struct filter {
 	int pos[NUM_LABELS];
-	int numops;
-	struct sock_filter code[MAX_OPCODES];
+	int numops, numalloc;
+	struct sock_filter *code;
 };
+
+static int checkfilter(struct filter *f)
+{
+	if (f->numops < f->numalloc)
+		return 1;
+
+	if (f->numalloc < 0)
+		return 0;
+
+	if (f->numalloc)
+		f->numalloc *= 2;
+	else
+		f->numalloc = 128;
+
+	f->code = realloc(f->code, f->numalloc * sizeof(struct sock_filter));
+	if (f->code == NULL) {
+		f->numalloc = -1;
+		return 0;
+	}
+
+	return 1;
+}
 
 static void emit_stmt(struct filter *f, __u16 code, __u32 k)
 {
-	if (f->numops < MAX_OPCODES) {
+	if (checkfilter(f)) {
 		f->code[f->numops].code = code;
 		f->code[f->numops].jt = 0;
 		f->code[f->numops].jf = 0;
@@ -78,7 +94,7 @@ static void emit_stmt(struct filter *f, __u16 code, __u32 k)
 
 static void emit_jump(struct filter *f, __u16 code, __u32 k, __u8 jt, __u8 jf)
 {
-	if (f->numops < MAX_OPCODES) {
+	if (checkfilter(f)) {
 		f->code[f->numops].code = code;
 		f->code[f->numops].jt = jt;
 		f->code[f->numops].jf = jf;
@@ -196,8 +212,8 @@ static void install_filter_cb(struct ev_timer *w, int revents)
 	emit_stmt(&f, BPF_RET|BPF_K, 0);
 
 	/* All ok so far? */
-	if (f.numops >= MAX_OPCODES) {
-		nhrp_error("Filter code buffer too small (code actual length %d)",
+	if (f.numalloc < 0) {
+		nhrp_error("Unable to construct filter code: out of memory (code actual length %d)",
 			   f.numops);
 		return;
 	}
@@ -217,9 +233,11 @@ static void install_filter_cb(struct ev_timer *w, int revents)
 	prog.filter = f.code;
 	if (setsockopt(packet_io.fd, SOL_SOCKET, SO_ATTACH_FILTER,
 		       &prog, sizeof(prog)))
-		return;
+		nhrp_perror("Failed to install filter code");
+	else
+		nhrp_info("Filter code installed (%d opcodes)", f.numops);
 
-	nhrp_info("Filter code installed (%d opcodes)", f.numops);
+	free(f.code);
 }
 
 int forward_local_addresses_changed(void)

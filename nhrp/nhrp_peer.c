@@ -1,13 +1,9 @@
 /* nhrp_peer.c - NHRP peer cache implementation
  *
- * Copyright (C) 2007-2009 Timo Teräs <timo.teras@iki.fi>
- * All rights reserved.
+ * Copyright (c) 2007-2012 Timo Teräs <timo.teras@iki.fi>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 or later as
- * published by the Free Software Foundation.
- *
- * See http://www.gnu.org/ for details.
+ * This software is licensed under the MIT License.
+ * See MIT-LICENSE.txt for additional details.
  */
 
 #include <stdio.h>
@@ -25,9 +21,6 @@
 
 #define NHRP_SCRIPT_TIMEOUT		(2*60)
 #define NHRP_NEGATIVE_CACHE_TIME	(3*60)
-#define NHRP_EXPIRY_TIME		(5*60)
-
-#define NHRP_HOLDING_TIME_DIVISOR	3	/* See RFC-2332 5.2.3 */
 
 #define NHRP_RETRY_REGISTER_TIME	(30 + random()/(RAND_MAX/60))
 #define NHRP_RETRY_ERROR_TIME		(60 + random()/(RAND_MAX/120))
@@ -49,6 +42,25 @@ const char * const nhrp_peer_type[] = {
 
 static int nhrp_peer_num_total = 0;
 static struct list_head local_peer_list = LIST_INITIALIZER(local_peer_list);
+
+static inline
+int holding_time_to_reregister_time(int holding_time)
+{
+	/* RFC-2332 5.2.3 recommends one third of holding time as
+	 * reregistration interval. */
+	return holding_time / 3 + 1;
+}
+
+static inline
+int holding_time_to_expiry_time(int holding_time, int offset_time)
+{
+	/* Reresolution interval */
+	int expire;
+	expire = 2 * holding_time / 3 - offset_time;
+	if (expire < 0)
+		expire = 0;
+	return expire + 1;
+}
 
 /* Peer entrys life, pending callbacks and their call order are listed
  * here.
@@ -495,8 +507,10 @@ static void nhrp_peer_script_route_up_done(union nhrp_peer_event e, int revents)
 						       sizeof(tmp), tmp));
 
 		peer->flags |= NHRP_PEER_FLAG_UP;
-		nhrp_peer_schedule(peer, peer->expire_time - NHRP_EXPIRY_TIME
-				   - 10 - ev_now(), nhrp_peer_expire_cb);
+		nhrp_peer_schedule(
+			peer,
+			holding_time_to_expiry_time(peer->expire_time - ev_now(), 10),
+			nhrp_peer_expire_cb);
 	} else {
 		nhrp_info("[%s] Route up script: %s; "
 			  "adding negative cached entry",
@@ -681,15 +695,15 @@ static void nhrp_peer_is_up(struct nhrp_peer *peer)
 	case NHRP_PEER_TYPE_CACHED:
 		nhrp_peer_schedule(
 			peer,
-			peer->expire_time - NHRP_EXPIRY_TIME - ev_now(),
+			holding_time_to_expiry_time(peer->expire_time - ev_now(), 0),
 			nhrp_peer_expire_cb);
 		break;
 	case NHRP_PEER_TYPE_STATIC:
 	case NHRP_PEER_TYPE_DYNAMIC_NHS:
 		if (peer->flags & NHRP_PEER_FLAG_REGISTER) {
 			nhrp_peer_schedule(
-				peer, iface->holding_time /
-				NHRP_HOLDING_TIME_DIVISOR + 1,
+				peer,
+				holding_time_to_reregister_time(iface->holding_time),
 				nhrp_peer_send_register_cb);
 		}
 		break;
@@ -1595,8 +1609,10 @@ static void nhrp_peer_insert_cb(struct ev_timer *w, int revents)
 			nhrp_peer_run_script(peer, "route-up",
 					     nhrp_peer_script_route_up_done);
 		else
-			nhrp_peer_schedule(peer, peer->expire_time - NHRP_EXPIRY_TIME
-					   - 10 - ev_now(), nhrp_peer_expire_cb);
+			nhrp_peer_schedule(
+				peer,
+				holding_time_to_expiry_time(peer->expire_time - ev_now(), 10),
+				nhrp_peer_expire_cb);
 		break;
 	case NHRP_PEER_TYPE_NEGATIVE:
 		peer->expire_time = ev_now() + NHRP_NEGATIVE_CACHE_TIME;

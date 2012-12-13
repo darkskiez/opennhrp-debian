@@ -6,6 +6,15 @@ Detailed changelog is available via Git history via web:
 http://opennhrp.git.sf.net/git/gitweb.cgi?p=opennhrp;a=blob;f=NEWS;hb=HEAD
 
 -----------------------------------------------------------------------------
+ opennhrp 0.14 - released 12/Dec/2012
+-----------------------------------------------------------------------------
+ - licensing terms changed to MIT License
+ - fix: do not lock up if there's routing loop for protocol address
+ - fix: handle low holding time for resolved entries properly
+ - fix: dynamically allocate packet filter code to accomodate large
+   routing tables
+
+-----------------------------------------------------------------------------
  opennhrp 0.13.1 - released 22/Jun/2012
 -----------------------------------------------------------------------------
  - fix: make "local-nbma" selector work properly if there are multiple gre
