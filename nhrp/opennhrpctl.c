@@ -1,13 +1,9 @@
 /* opennhrpctl.c - OpenNHRP command line control utility
  *
- * Copyright (C) 2007 Timo Teräs <timo.teras@iki.fi>
- * All rights reserved.
+ * Copyright (c) 2007-2012 Timo Teräs <timo.teras@iki.fi>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 or later as
- * published by the Free Software Foundation.
- *
- * See http://www.gnu.org/ for details.
+ * This software is licensed under the MIT License.
+ * See MIT-LICENSE.txt for additional details.
  */
 
 #include <errno.h>

@@ -8,6 +8,17 @@ Project homepage: http://sourceforge.net/projects/opennhrp
 
 Git repository: git://opennhrp.git.sourceforge.net/gitroot/opennhrp
 
+	LICENSE
+
+OpenNHRP is licensed under the MIT License. See MIT-LICENSE.txt for
+additional details.
+
+OpenNHRP embeds libev. libev is dual licensed with 2-clause BSD and
+GPLv2+ licenses. See libev/LICENSE for additional details.
+
+OpenNHRP links to c-ares. c-ares is licensed under the MIT License.
+
+
 	KERNEL REQUIREMENTS
 
 You need a kernel with ip_gre patched to support sending and receiving

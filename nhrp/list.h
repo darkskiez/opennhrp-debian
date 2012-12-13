@@ -1,13 +1,9 @@
 /* list.h - Single and double linked list macros
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 or later as
- * published by the Free Software Foundation.
+ * Copyright (c) 2007-2012 Timo Teräs <timo.teras@iki.fi>
  *
- * See http://www.gnu.org/ for details.
- *
- * This is more or less based on the code in the linux kernel. There are
- * minor differences and this is only a subset of the kernel version.
+ * This software is licensed under the MIT License.
+ * See MIT-LICENSE.txt for additional details.
  */
 
 #ifndef LIST_H
