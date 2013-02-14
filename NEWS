@@ -6,6 +6,13 @@ Detailed changelog is available via Git history via web:
 http://opennhrp.git.sf.net/git/gitweb.cgi?p=opennhrp;a=blob;f=NEWS;hb=HEAD
 
 -----------------------------------------------------------------------------
+ opennhrp 0.14.1 - released 30/Jan/2013
+-----------------------------------------------------------------------------
+ - fix: recover from dns lookup failure of dynamic-map entries
+ - fix: correct the multicast capture rules (to not send traffic indication
+   about multicast packets)
+
+-----------------------------------------------------------------------------
  opennhrp 0.14 - released 12/Dec/2012
 -----------------------------------------------------------------------------
  - licensing terms changed to MIT License
