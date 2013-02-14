@@ -485,6 +485,7 @@ static void nhrp_peer_restart_error(struct nhrp_peer *peer)
 {
 	switch (peer->type) {
 	case NHRP_PEER_TYPE_STATIC:
+	case NHRP_PEER_TYPE_STATIC_DNS:
 	case NHRP_PEER_TYPE_DYNAMIC_NHS:
 		nhrp_peer_schedule(peer, NHRP_RETRY_ERROR_TIME,
 				   nhrp_peer_restart_cb);
